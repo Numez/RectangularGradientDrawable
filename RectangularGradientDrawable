@@ -1,0 +1,105 @@
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.Shader;
+import android.graphics.Shader.TileMode;
+import android.graphics.drawable.Drawable;
+
+public class RectangularGradientDrawable extends Drawable {
+	
+	private Paint p;
+	
+	private int[] colors;
+	private float[] stops;
+
+	public RectangularGradientDrawable(int centerColor, int edgeColor) {
+		this( new int[] { centerColor, edgeColor }, new float[] { 0f, 1f } );
+	}
+	
+	public RectangularGradientDrawable(int[] colors, float[] stops) {
+		
+		p = new Paint();
+		p.setAntiAlias(true);
+		
+		this.colors = colors;
+		this.stops = stops;
+	}
+
+	@Override
+	public void draw(Canvas cnv) {
+		
+		float w = getBounds().width();
+		float h = getBounds().height();
+		
+		drawTopLeftGradient(cnv, w, h);
+		
+		cnv.rotate(180, w/2, h/2);
+
+		drawTopLeftGradient(cnv, w, h);
+		
+		cnv.restore();
+		
+	}
+
+	private void drawTopLeftGradient(Canvas cnv, float w, float h) {
+		
+		Path top = new Path();
+		top.moveTo(0, 0);
+		top.lineTo(w, 0);
+
+		Path left = new Path();
+		left.moveTo(0, 0);
+		left.lineTo(0, h);
+		
+		Shader topShader, leftShader;
+		
+		if(w>h) {
+			top.lineTo(w - h/2, h/2);
+			top.lineTo(h/2, h/2);
+			
+			left.lineTo(h/2, h/2);
+			
+			topShader = new LinearGradient(0, h/2, 0, 0, colors, stops, TileMode.CLAMP);
+			leftShader = new LinearGradient(h/2, 0, 0, 0, colors, stops, TileMode.CLAMP);
+			
+			
+		} else {
+			top.lineTo(w/2, w/2);
+			
+			left.lineTo(w/2, h - w/2);
+			left.lineTo(w/2, w/2);
+
+			topShader = new LinearGradient(0, w/2, 0, 0, colors, stops, TileMode.CLAMP);
+			leftShader = new LinearGradient(w/2, 0, 0, 0, colors, stops, TileMode.CLAMP);
+			
+		}
+		
+		// draw top
+		p.setShader(topShader); 
+		cnv.drawPath(top, p);
+		
+		// draw left
+		p.setShader(leftShader); 
+		cnv.drawPath(left, p);
+		
+	}
+
+	@Override
+	public void setAlpha(int alpha) {
+		p.setAlpha(alpha);
+	}
+
+	@Override
+	public void setColorFilter(ColorFilter cf) {
+		// not supported
+	}
+
+	@Override
+	public int getOpacity() {
+		return PixelFormat.TRANSLUCENT;
+	}
+
+}
