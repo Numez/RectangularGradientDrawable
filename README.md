@@ -1,7 +1,7 @@
 # RectangularGradientDrawable
 -------
 A custom drawable that can be set as background of a view to be the shadow
-![RectangularGradientDrawable]()
+![RectangularGradientDrawable](https://github.com/Numez/RectangularGradientDrawable/img.jpg)
 -------
     Copyright 2015 Tiziano Munegato
     
